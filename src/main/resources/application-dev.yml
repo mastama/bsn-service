@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: bsn
+  jackson:
+    time-zone: Asia/Jakarta
+
+  datasource:
+    hikari: #menggunakan hikari untuk: kinerja, konfigurasi yang mudah, dan integrasi yang mulus dengan framework Spring Boot
+      idle-timeout: 300000
+      connection-timeout: 15000
+      minimum-idle: 2
+      maximum-pool-size: 5
+    username: postgres
+    password: post456
+    url: jdbc:postgresql://localhost:5432/anfal
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: none
+        default_schema: ${DATABASE_SCHEMA:public}
+  mail:
+    host: localhost
+    port: 1025
+    username: tanfal
+    password: tanfal
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enable: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+server:
+  port: 8088
