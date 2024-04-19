@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres-sql-bsn
+    image: postgres
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: post456
+      POSTGRES_DB: anfal
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - 5432:5432
+
+  mail-dev:
+    container_name: mail-dev-bsn
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+
+networks:
+  spring-demo-bsn:
+    driver: bridge
+
+volumes:
+  postgres:
+    driver: local
