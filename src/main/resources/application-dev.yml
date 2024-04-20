@@ -39,5 +39,11 @@ spring:
         timeout: 3000
         writetimeout: 5000
 
+application:
+  security:
+    jwt:
+      secret-key: T3mP#3c6x4H8jRmU9gC0tEwJz1nSbF5gV8bN8dF3hT5nY7sQ0wM1zA2xR4eT7yG0uK8oP3eR6tY0uL2iE3rA5sV8lB0rE4sT5vN8wC0fX1mZ3nS5bF8gV3bN8cD3fH5jR7mT0nY7
+      expiration: 8640000
+
 server:
   port: 8088
