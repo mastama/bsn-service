@@ -2,7 +2,7 @@ package id.co.anfal.bsn.service;
 
 import id.co.anfal.bsn.dto.AuthenticationRequest;
 import id.co.anfal.bsn.dto.AuthenticationResponse;
-import id.co.anfal.bsn.dto.RegistrationRequestDto;
+import id.co.anfal.bsn.dto.RegistrationRequest;
 import id.co.anfal.bsn.entity.EmailTemplateName;
 import id.co.anfal.bsn.entity.Token;
 import id.co.anfal.bsn.entity.User;
@@ -11,7 +11,6 @@ import id.co.anfal.bsn.repository.TokenRepository;
 import id.co.anfal.bsn.repository.UserRepository;
 import id.co.anfal.bsn.security.JwtService;
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +39,7 @@ public class AuthenticationService {
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
 
-    public void register(RegistrationRequestDto req) throws MessagingException {
+    public void register(RegistrationRequest req) throws MessagingException {
         log.info("START registration request: {}",  req.getFirstName());
         var userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new IllegalStateException("ROLE USER was not initialized"));

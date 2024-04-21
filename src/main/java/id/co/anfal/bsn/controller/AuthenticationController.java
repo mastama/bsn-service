@@ -2,7 +2,7 @@ package id.co.anfal.bsn.controller;
 
 import id.co.anfal.bsn.dto.AuthenticationRequest;
 import id.co.anfal.bsn.dto.AuthenticationResponse;
-import id.co.anfal.bsn.dto.RegistrationRequestDto;
+import id.co.anfal.bsn.dto.RegistrationRequest;
 import id.co.anfal.bsn.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
@@ -24,7 +24,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/register")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequestDto req) throws MessagingException {
+    public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest req) throws MessagingException {
         log.info("Incoming registration user: {}", req.getLastName());
         authService.register(req);
         log.info("Outgoing registered user: {}", req.getLastName());
