@@ -1,5 +1,7 @@
 package id.co.anfal.bsn.service;
 
+import id.co.anfal.bsn.dto.AuthenticationRequest;
+import id.co.anfal.bsn.dto.AuthenticationResponse;
 import id.co.anfal.bsn.dto.RegistrationRequestDto;
 import id.co.anfal.bsn.entity.EmailTemplateName;
 import id.co.anfal.bsn.entity.Token;
@@ -7,15 +9,20 @@ import id.co.anfal.bsn.entity.User;
 import id.co.anfal.bsn.repository.RoleRepository;
 import id.co.anfal.bsn.repository.TokenRepository;
 import id.co.anfal.bsn.repository.UserRepository;
+import id.co.anfal.bsn.security.JwtService;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -27,6 +34,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
@@ -58,7 +67,7 @@ public class AuthenticationService {
         // send email
         emailService.sendEmail(
                 user.getEmail(),
-                user.fullName(),
+                user.getFullName(),
                 EmailTemplateName.ACTIVATE_ACCOUNT,
                 activationUrl,
                 newToken,
@@ -93,5 +102,42 @@ public class AuthenticationService {
         }
         log.info("END generateActivationCode is success: {}", codeBuilder);
         return codeBuilder.toString();
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest req) {
+        log.info("START authenticate login account: {}", req.getEmail());
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        req.getEmail(),
+                        req.getPassword()
+                )
+        );
+        var claims = new HashMap<String, Object>();
+        var user = ((User)auth.getPrincipal());
+        claims.put("fullName", user.getFullName());
+        var jwtToken = jwtService.generateToken(claims, user);
+        log.info("END authenticate login is success: {}", req.getEmail());
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+//    @Transactional
+    public void activateAccount(String token) throws MessagingException {
+        log.info("START activate account: {}", token);
+        Token savedToken = tokenRepository.findByToken(token)
+                //TODO exception has to be defined
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
+            sendValidationEmail(savedToken.getUser());
+            throw new RuntimeException("Activation token has expired. A new token has been send to your email");
+        }
+        var user = userRepository.findById(savedToken.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+        savedToken.setValidateAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
+        log.info("END activate account is success: {}", token);
     }
 }

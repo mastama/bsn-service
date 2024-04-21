@@ -1,5 +1,7 @@
 package id.co.anfal.bsn.controller;
 
+import id.co.anfal.bsn.dto.AuthenticationRequest;
+import id.co.anfal.bsn.dto.AuthenticationResponse;
 import id.co.anfal.bsn.dto.RegistrationRequestDto;
 import id.co.anfal.bsn.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,5 +29,19 @@ public class AuthenticationController {
         authService.register(req);
         log.info("Outgoing registered user: {}", req.getLastName());
         return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest req) {
+        log.info("Incoming authentication: {}", req.getEmail());
+        log.info("Outgoing authentication: {}", req.getEmail());
+        return ResponseEntity.ok(authService.authenticate(req));
+    }
+
+    @GetMapping(value = "/activate-account")
+    public void confirm(@RequestParam String token) throws MessagingException {
+        log.info("Incoming confirm activation account: {}", token);
+        authService.activateAccount(token);
+        log.info("Outgoing confirm activation account: {}", token);
     }
 }

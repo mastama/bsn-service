@@ -2,6 +2,7 @@ package id.co.anfal.bsn.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -106,6 +107,10 @@ public class User implements UserDetails, Principal {
     }
 
     public String fullName() {
+        return firstName + " " + lastName;
+    }
+
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 }
