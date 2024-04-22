@@ -41,7 +41,13 @@ public class User implements UserDetails, Principal {
     private boolean accountLocked;
 
     @ManyToMany(fetch = FetchType.EAGER)
-     private List<Role> roles;
+    private List<Role> roles;
+
+    @OneToMany(mappedBy = "owner") //one user has many books
+    private List<Book> books;
+
+    @OneToMany(mappedBy = "user")
+    private List<BookTransactionHistory> bookTransactionHistories;
 
     /**
      * untuk menggunakan @EntityListeners u need this field
