@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@EnableJpaAuditing //if u use @EntityListeners u need add this annotation
+@EnableJpaAuditing(auditorAwareRef = "auditorAware") //if u use @EntityListeners u need add this annotation
 @EnableAsync
 public class BsnApplication {
 
