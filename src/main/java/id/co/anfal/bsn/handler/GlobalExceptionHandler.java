@@ -1,6 +1,7 @@
 package id.co.anfal.bsn.handler;
 
 import id.co.anfal.bsn.dto.ExceptionResponse;
+import id.co.anfal.bsn.exception.OperationNotPermittedException;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -101,6 +102,17 @@ public class GlobalExceptionHandler {
                         ExceptionResponse.builder()
                                 .businessErrorDescription("Internal Server Error, contact the admin")
                                 .error(exception.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(OperationNotPermittedException.class)
+    public ResponseEntity<ExceptionResponse> handleException(OperationNotPermittedException operationNotPermittedException) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ExceptionResponse.builder()
+                                .error(operationNotPermittedException.getMessage())
                                 .build()
                 );
     }
