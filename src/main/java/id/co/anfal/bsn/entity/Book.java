@@ -31,7 +31,7 @@ public class Book extends BaseEntity {
     private User owner;
 
     @OneToMany(mappedBy = "book") //one book can have many feedBacks
-    private List<FeedBack> feedBacks;
+    private List<Feedback> feedBacks;
 
     @OneToMany(mappedBy = "book")
     private List<BookTransactionHistory> bookTransactionHistories;
@@ -42,7 +42,7 @@ public class Book extends BaseEntity {
             return 0.0;
         }
         var rate = this.feedBacks.stream()
-                .mapToDouble(FeedBack::getNote)
+                .mapToDouble(Feedback::getNote)
                 .average()
                 .orElse(0.0);
         // 3.23 --> 3.0 || 3.65 --> 4.0
